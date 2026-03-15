@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/template}"
+      lang="fr">
+<head>
+    <title>Produits</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-box-seam text-primary me-2"></i>Gestion des Produits</h2>
+            <p class="text-muted mb-0" th:text="'Total: ' + ${totalItems} + ' produit(s)'"></p>
+        </div>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/formProduct}"
+           class="btn btn-primary">
+            <i class="bi bi-plus-lg me-1"></i>Nouveau Produit
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <!-- Search form -->
+            <form th:action="@{/products}" method="get" class="d-flex gap-2 align-items-center">
+                <div class="input-group" style="max-width:400px">
+                    <span class="input-group-text bg-white border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           class="form-control border-start-0 ps-0"
+                           placeholder="Rechercher un produit...">
+                </div>
+                <button type="submit" class="btn btn-outline-primary">
+                    <i class="bi bi-search me-1"></i>Rechercher
+                </button>
+                <a th:href="@{/products}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-1"></i>Réinitialiser
+                </a>
+            </form>
+        </div>
+
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th><i class="bi bi-tag me-1"></i>Nom</th>
+                        <th><i class="bi bi-currency-dollar me-1"></i>Prix (MAD)</th>
+                        <th><i class="bi bi-boxes me-1"></i>Quantité</th>
+                        <th>Description</th>
+                        <th sec:authorize="hasRole('ADMIN')">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(products)}">
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                            Aucun produit trouvé
+                        </td>
+                    </tr>
+                    <tr th:each="product : ${products}">
+                        <td class="text-muted small" th:text="${product.id}"></td>
+                        <td class="fw-semibold" th:text="${product.name}"></td>
+                        <td>
+                            <span class="text-success fw-bold"
+                                  th:text="${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')} + ' MAD'">
+                            </span>
+                        </td>
+                        <td>
+                            <span th:class="${product.quantity > 10 ? 'badge bg-success' :
+                                            (product.quantity > 0 ? 'badge bg-warning' : 'badge bg-danger')}"
+                                  th:text="${product.quantity}">
+                            </span>
+                        </td>
+                        <td class="text-muted small"
+                            th:text="${product.description != null ? (product.description.length() > 50 ? product.description.substring(0,50) + '...' : product.description) : '-'}">
+                        </td>
+                        <td sec:authorize="hasRole('ADMIN')">
+                            <div class="d-flex gap-1">
+                                <a th:href="@{/editProduct/{id}(id=${product.id})}"
+                                   class="btn btn-sm btn-outline-primary" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a th:href="@{/deleteProduct/{id}(id=${product.id}, keyword=${keyword}, page=${currentPage})}"
+                                   class="btn btn-sm btn-outline-danger"
+                                   title="Supprimer"
+                                   onclick="return confirm('Supprimer ce produit?')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="card-footer bg-white d-flex justify-content-center py-3" th:if="${pages.length > 1}">
+            <ul class="pagination mb-0">
+                <li class="page-item" th:classappend="${currentPage == 0 ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/products(page=${currentPage - 1}, keyword=${keyword})}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+                <li class="page-item"
+                    th:each="page, i : ${pages}"
+                    th:classappend="${currentPage == i.index ? 'active' : ''}">
+                    <a class="page-link"
+                       th:href="@{/products(page=${i.index}, keyword=${keyword})}"
+                       th:text="${i.index + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == pages.length - 1 ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/products(page=${currentPage + 1}, keyword=${keyword})}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>

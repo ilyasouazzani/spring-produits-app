@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Connexion - Spring App</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e3a5f 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+            overflow: hidden;
+            width: 100%;
+            max-width: 440px;
+        }
+        .login-header {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+        }
+        .login-header .logo {
+            width: 70px; height: 70px;
+            background: rgba(255,255,255,.2);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+        }
+        .login-body { padding: 2.5rem; }
+        .form-control {
+            border-radius: 10px;
+            border: 1.5px solid #e2e8f0;
+            padding: .65rem 1rem;
+        }
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            padding: .75rem;
+            font-size: 1rem;
+            transition: opacity .2s;
+        }
+        .btn-login:hover { opacity: .9; color: white; }
+        .credential-card {
+            background: #f8fafc;
+            border: 1.5px dashed #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: .85rem;
+        }
+        .credential-card code {
+            background: #e2e8f0;
+            padding: .1rem .4rem;
+            border-radius: 4px;
+            font-size: .8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="login-header">
+            <div class="logo"><i class="bi bi-layers-fill"></i></div>
+            <h4 class="fw-bold mb-1">Spring App</h4>
+            <p class="mb-0 opacity-75">Gestion des Produits & Patients</p>
+        </div>
+        <div class="login-body">
+
+            <!-- Error alert -->
+            <div th:if="${param.error}" class="alert alert-danger d-flex align-items-center gap-2 mb-4">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>Identifiants incorrects. Veuillez réessayer.</span>
+            </div>
+
+            <!-- Logout alert -->
+            <div th:if="${param.logout}" class="alert alert-success d-flex align-items-center gap-2 mb-4">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>Vous avez été déconnecté avec succès.</span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-slate-700">
+                        <i class="bi bi-person me-1"></i>Nom d'utilisateur
+                    </label>
+                    <input type="text" name="username" class="form-control"
+                           placeholder="Entrez votre nom d'utilisateur"
+                           autocomplete="username" required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-lock me-1"></i>Mot de passe
+                    </label>
+                    <input type="password" name="password" class="form-control"
+                           placeholder="Entrez votre mot de passe"
+                           autocomplete="current-password" required>
+                </div>
+
+                <div class="form-check mb-4">
+                    <input class="form-check-input" type="checkbox" name="remember-me" id="rememberMe">
+                    <label class="form-check-label text-muted" for="rememberMe">Se souvenir de moi</label>
+                </div>
+
+                <button type="submit" class="btn btn-login w-100">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                </button>
+            </form>
+
+            <!-- Test credentials -->
+            <div class="credential-card mt-4">
+                <div class="fw-semibold text-muted mb-2"><i class="bi bi-info-circle me-1"></i>Comptes de test</div>
+                <div class="mb-1">
+                    <strong>Utilisateur:</strong> <code>user1</code> / <code>1234</code>
+                    <span class="badge bg-primary ms-1" style="font-size:.65rem">USER</span>
+                </div>
+                <div>
+                    <strong>Admin:</strong> <code>admin</code> / <code>1234</code>
+                    <span class="badge bg-danger ms-1" style="font-size:.65rem">ADMIN</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

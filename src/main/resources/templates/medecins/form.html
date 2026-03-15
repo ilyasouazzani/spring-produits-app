@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/template}"
+      lang="fr">
+<head>
+    <title th:text="${mode == 'edit'} ? 'Modifier Médecin' : 'Nouveau Médecin'">Médecin</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex align-items-center gap-2 mb-4">
+        <a th:href="@{/medecins}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left"></i></a>
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-hospital text-info me-2"></i>
+            <span th:text="${mode == 'edit'} ? 'Modifier le Médecin' : 'Nouveau Médecin'"></span>
+        </h2>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-pencil-square me-2 text-info"></i>Formulaire Médecin
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/saveMedecin}" method="post" th:object="${medecin}">
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nom complet <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" th:field="*{nom}"
+                                   th:classappend="${#fields.hasErrors('nom')} ? 'is-invalid'"
+                                   placeholder="Dr. Nom Prénom">
+                            <div class="invalid-feedback" th:errors="*{nom}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" th:field="*{email}"
+                                   th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"
+                                   placeholder="medecin@hopital.ma">
+                            <div class="invalid-feedback" th:errors="*{email}"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Spécialité <span class="text-danger">*</span></label>
+                            <select class="form-select" th:field="*{specialite}"
+                                    th:classappend="${#fields.hasErrors('specialite')} ? 'is-invalid'">
+                                <option value="">-- Choisir une spécialité --</option>
+                                <option value="Cardiologie">Cardiologie</option>
+                                <option value="Neurologie">Neurologie</option>
+                                <option value="Pédiatrie">Pédiatrie</option>
+                                <option value="Dermatologie">Dermatologie</option>
+                                <option value="Ophtalmologie">Ophtalmologie</option>
+                                <option value="Chirurgie">Chirurgie</option>
+                                <option value="Radiologie">Radiologie</option>
+                                <option value="Gynécologie">Gynécologie</option>
+                                <option value="Orthopédie">Orthopédie</option>
+                                <option value="Psychiatrie">Psychiatrie</option>
+                                <option value="Médecine générale">Médecine générale</option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{specialite}"></div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i>
+                                <span th:text="${mode == 'edit'} ? 'Mettre à jour' : 'Enregistrer'"></span>
+                            </button>
+                            <a th:href="@{/medecins}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-1"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

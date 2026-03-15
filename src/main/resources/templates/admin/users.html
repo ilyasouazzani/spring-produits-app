@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/template}"
+      lang="fr">
+<head><title>Gestion Utilisateurs</title></head>
+<body>
+<div layout:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-people text-warning me-2"></i>Gestion des Utilisateurs</h2>
+    </div>
+
+    <div class="row g-4">
+        <!-- Users table -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-person-lines-fill me-2"></i>Liste des utilisateurs
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                        <tr>
+                            <th>Utilisateur</th>
+                            <th>Email</th>
+                            <th>Rôles</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="user : ${users}">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                         style="width:36px;height:36px;font-size:.9rem"
+                                         th:text="${user.username.substring(0,1).toUpperCase()}">U</div>
+                                    <span class="fw-semibold" th:text="${user.username}"></span>
+                                </div>
+                            </td>
+                            <td class="text-muted small" th:text="${user.email ?: '-'}"></td>
+                            <td>
+                                <span th:each="role : ${user.roles}"
+                                      th:class="${role.roleName == 'ADMIN' ? 'badge bg-danger me-1' : 'badge bg-primary me-1'}"
+                                      th:text="${role.roleName}"></span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1 flex-wrap">
+                                    <th:block th:each="role : ${roles}">
+                                        <a th:unless="${user.roles.contains(role)}"
+                                           th:href="@{/admin/addRoleToUser(username=${user.username}, roleName=${role.roleName})}"
+                                           class="btn btn-xs btn-outline-success"
+                                           style="font-size:.75rem;padding:.25rem .5rem"
+                                           th:title="'Ajouter ' + ${role.roleName}">
+                                            <i class="bi bi-plus"></i> <span th:text="${role.roleName}"></span>
+                                        </a>
+                                        <a th:if="${user.roles.contains(role)}"
+                                           th:href="@{/admin/removeRoleFromUser(username=${user.username}, roleName=${role.roleName})}"
+                                           class="btn btn-xs btn-outline-warning"
+                                           style="font-size:.75rem;padding:.25rem .5rem"
+                                           th:title="'Retirer ' + ${role.roleName}"
+                                           onclick="return confirm('Retirer ce rôle?')">
+                                            <i class="bi bi-dash"></i> <span th:text="${role.roleName}"></span>
+                                        </a>
+                                    </th:block>
+                                    <a th:href="@{/admin/deleteUser/{id}(id=${user.userId})}"
+                                       class="btn btn-xs btn-outline-danger"
+                                       style="font-size:.75rem;padding:.25rem .5rem"
+                                       onclick="return confirm('Supprimer cet utilisateur?')">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(users)}">
+                            <td colspan="4" class="text-center py-4 text-muted">Aucun utilisateur</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add user form -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-person-plus me-2 text-warning"></i>Créer un utilisateur
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/addUser}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Nom d'utilisateur</label>
+                            <input type="text" name="username" class="form-control"
+                                   placeholder="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mot de passe</label>
+                            <input type="password" name="password" class="form-control"
+                                   placeholder="••••••••" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" name="email" class="form-control"
+                                   placeholder="email@example.com">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-semibold">
+                            <i class="bi bi-person-plus me-1"></i>Créer l'utilisateur
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Roles list -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <i class="bi bi-shield-check me-2 text-info"></i>Rôles disponibles
+                </div>
+                <div class="card-body">
+                    <div th:each="role : ${roles}" class="d-flex align-items-center gap-2 mb-2">
+                        <span th:class="${role.roleName == 'ADMIN' ? 'badge bg-danger' : 'badge bg-primary'}"
+                              th:text="${role.roleName}"></span>
+                        <span class="text-muted small" th:text="${role.roleName == 'ADMIN' ? 'Accès complet' : 'Accès lecture'}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
